@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resolver Ecuación</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+      input[type="number"] {
+        width: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Resolver Ecuación \(x^3 - \exp(0.8x) - 20 = 0\)</h1>
+    <form id="solveForm">
+      <label for="a">Intervalo a:</label>
+      <input type="number" id="a" name="a" value="0" step="0.01" required />
+      <br /><br />
+      <label for="b">Intervalo b:</label>
+      <input type="number" id="b" name="b" value="8" step="0.01" required />
+      <br /><br />
+      <label for="tol">Tolerancia:</label>
+      <input
+        type="number"
+        id="tol"
+        name="tol"
+        value="1e-6"
+        step="1e-7"
+        required
+      />
+      <br /><br />
+      <button type="submit">Resolver</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+      // Definir la función
+      function f(x) {
+        return Math.pow(x, 3) - Math.exp(0.8 * x) - 20;
+      }
+
+      // Método de bisección
+      function bisection(a, b, tol, maxIter) {
+        if (f(a) * f(b) >= 0) {
+          return "El método de bisección no puede aplicarse.";
+        }
+
+        let c = a;
+        for (let i = 0; i < maxIter; i++) {
+          c = (a + b) / 2;
+
+          // Si la raíz está suficientemente cerca del valor de c, terminamos
+          if (f(c) === 0.0 || (b - a) / 2 < tol) {
+            return c;
+          }
+
+          // Decidir el subintervalo en el que se encuentra la raíz
+          if (f(c) * f(a) < 0) {
+            b = c;
+          } else {
+            a = c;
+          }
+        }
+
+        return c;
+      }
+
+      document
+        .getElementById("solveForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const a = parseFloat(document.getElementById("a").value);
+          const b = parseFloat(document.getElementById("b").value);
+          const tol = parseFloat(document.getElementById("tol").value);
+          const maxIter = 1000; // Número máximo de iteraciones
+
+          const root = bisection(a, b, tol, maxIter);
+          document.getElementById(
+            "result"
+          ).innerHTML = `La raíz en el intervalo [${a}, ${b}] es: ${root}`;
+        });
+    </script>
+  </body>
+</html>
